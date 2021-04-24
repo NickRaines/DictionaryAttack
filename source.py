@@ -28,6 +28,7 @@ hash_type = 'SHA256' if hasher else 'SHA512'
 hashed_password = hash.sha3_256() if hasher else hash.sha3_512()
 hashed_password.update(str.encode(plaintext_password))
 
+# starts the clock
 start = time.time()
 
 # go through every permutation of up to MAX_PASS_LENGTH words in wordlist
@@ -62,17 +63,21 @@ while counter < pow(len(wordlist), MAX_PASS_LENGTH):
 if not worked:
     print("There was no combination that worked for " + plaintext_password)
 
+# stops the clock
 elapsed_time = time.time() - start
 
+# sets up empty arrays
 guesses = []
 time_passed = []
 
+# adds the count number for each point in time
 for i in range (math.ceil(elapsed_time) * 100):
     guesses.append((case_counter / elapsed_time) * i / 100)
     time_passed.append(i / 100)
     if (i / 100 > elapsed_time):
         break
 
+# plots everything
 plt.plot(time_passed, guesses)
 plt.xlabel('Time Elapsed (seconds)')
 plt.ylabel('Hashes Compared')
