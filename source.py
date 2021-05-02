@@ -20,7 +20,6 @@ filecontent = csv.reader(file)
 for word in filecontent:
     wordlist.append(word[0])
 
-
 passwordlist = []
 file = open('passwords.txt', 'r')
 filecontent = csv.reader(file)
