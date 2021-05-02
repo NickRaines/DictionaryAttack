@@ -29,18 +29,25 @@ for word in filecontent:
 
 print(passwordlist)
 
+# Sets up some variables
 guesses = []
 time_passed = []
 
 # determine hasher
-hasher = input("Would you like to use (0) sha256 or (1) sha512?: ")
-
+hasher_chosen = False
+while not hasher_chosen:
+    hasher = input("Would you like to use (0) sha256 or (1) sha512?: ")
+    if hasher == '0' or hasher == '1':
+        hasher = int(hasher)
+        hasher_chosen = True
+    else:
+        print("Please select a valid hasher by typing 0 or 1.")
 
 # take an input password and hash it
 for index, plaintext_password in enumerate(passwordlist):
     password_length = len(plaintext_password)
-    hash_type = 'SHA256' if hasher else 'SHA512'
-    hashed_password = hash.sha3_256() if hasher else hash.sha3_512()
+    hash_type = 'SHA512' if hasher else 'SHA256'
+    hashed_password = hash.sha3_512() if hasher else hash.sha3_256()
     hashed_password.update(str.encode(plaintext_password))
 
     # starts the clock
@@ -64,11 +71,11 @@ for index, plaintext_password in enumerate(passwordlist):
         if len(current) == password_length:
             case_counter += 1
             # hash the permutation
-            curr_hashed = hash.sha3_256() if hasher else hash.sha3_512()
+            curr_hashed = hash.sha3_512() if hasher else hash.sha3_256()
             curr_hashed.update(str.encode(current))
             # compare it to the hashed_password
             if curr_hashed.hexdigest() == hashed_password.hexdigest():
-                # print the permuation if it was correct and exit the loop
+                # print the permutation if it was correct and exit the loop
                 print("The hash " + curr_hashed.hexdigest() + " corresponds to " + current)
                 worked = True
                 break
@@ -81,20 +88,12 @@ for index, plaintext_password in enumerate(passwordlist):
     # stops the clock
     elapsed_time = time.time() - start
     time_passed.append(elapsed_time)
-    guesses.append(counter)
+    guesses.append(case_counter)
 
-#    # adds the count number for each point in time
-#    for i in range (math.ceil(elapsed_time) * 100):
-#        guesses.append((case_counter / elapsed_time) * i / 100)
-#        time_passed.append(i / 100)
-#        if (i / 100 > elapsed_time):
-#            break
-print(guesses)
-print(time_passed)
-plots everything
-plt.plot(time_passed, guesses)
+# plots everything
+plt.scatter(time_passed, guesses)
 plt.xlabel('Time Elapsed (seconds)')
 plt.ylabel('Hashes Compared')
-plt.suptitle(str(case_counter) + ' crack attempts over ' + str(round(elapsed_time, 3)) + ' seconds', fontsize=14, fontweight='bold')
+plt.suptitle(str(sum(guesses)) + ' crack attempts over ' + str(round(sum(time_passed), 3)) + ' seconds', fontsize=14, fontweight='bold')
 plt.title('Dictionary size: ' + str(len(wordlist)) + ' words | Hash type: ' + hash_type)
 plt.show()
